@@ -13,6 +13,7 @@ class EchoLifecycle {
   constructor (el, width, height, stateChangedCallback) {
     this.id = `${EchoLifecycle.widgetName}-${EchoLifecycle.widgetIndex++}`
     this.rootElement = _.has(el, 'length') ? el[0] : el
+
     this.width = width
     this.height = height
     this.state = {}
@@ -55,6 +56,7 @@ class EchoLifecycle {
   }
 
   _manipulateRootElementSize () {
+    $(this.rootElement).width('100%').height('100%')
   }
 
   _addRootSvgToRootElement () {
@@ -79,7 +81,6 @@ class EchoLifecycle {
     const maxDisplayableEventsCount = Math.floor(this.height / (messageContainerHeight + messageContainerGutter))
     const displayableEventCount = Math.min(this.events.length, maxDisplayableEventsCount)
     const displayableEvents = _.slice(this.events, this.events.length - displayableEventCount, this.events.length)
-    console.log(`this.height ${this.height}, displayableEventCount: ${displayableEventCount}, displayableEvents.length: ${displayableEvents.length}`)
 
     this.outerSvg.selectAll('.event').remove()
 
