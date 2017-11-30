@@ -1,0 +1,10 @@
+Package: rhtmlEchoLifecycle
+Type: Package
+Title: rhtmlEchoLifecycle
+Version: 1.0.0
+Author: Displayr <opensource@displayr.com>
+Maintainer: Displayr <opensource@displayr.com>
+Description: An HTML widget that echoes all functon calls for debug purposes.
+License: GPL-3
+LazyData: TRUE
+RoxygenNote: 6.0.1

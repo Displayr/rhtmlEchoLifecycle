@@ -1,0 +1,5 @@
+{
+  "widgetEntryPoint": "theSrc/scripts/rhtmlEchoLifecycle.js",
+  "widgetFactory": "theSrc/scripts/rhtmlEchoLifecycle.factory.js",
+  "widgetName": "rhtmlEchoLifecycle"
+}
