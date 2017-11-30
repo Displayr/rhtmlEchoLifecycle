@@ -19,6 +19,10 @@ class EchoLifecycle {
     this.stateChangedCallback = stateChangedCallback
     this.events = []
     this.pushEvent({ message: `constructor called with ${width} ${height}` })
+
+    const actualWidth = $(this.rootElement).width()
+    const actualHeight = $(this.rootElement).height()
+    this.pushEvent({ message: `actual container size at constructor time: ${actualWidth}x${actualHeight}` })
   }
 
   pushEvent (event) {
@@ -29,6 +33,11 @@ class EchoLifecycle {
     this.pushEvent({ message: `resize called with ${width} ${height}` })
     this.width = width
     this.height = height
+
+    const actualWidth = $(this.rootElement).width()
+    const actualHeight = $(this.rootElement).height()
+    this.pushEvent({ message: `actual container size at resize time: ${actualWidth}x${actualHeight}` })
+
     return this._draw()
   }
 
