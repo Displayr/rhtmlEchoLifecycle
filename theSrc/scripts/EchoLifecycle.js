@@ -3,6 +3,7 @@
 import $ from 'jquery'
 import _ from 'lodash'
 import * as d3 from 'd3'
+import deepEqual from 'deep-equal'
 
 class EchoLifecycle {
   static initClass () {
@@ -13,6 +14,8 @@ class EchoLifecycle {
   constructor (el, width, height, stateChangedCallback) {
     this.id = `${EchoLifecycle.widgetName}-${EchoLifecycle.widgetIndex++}`
     this.rootElement = _.has(el, 'length') ? el[0] : el
+    this.renderValueCalled = false
+    this.start = Date.now()
 
     this.width = width
     this.height = height
@@ -21,28 +24,69 @@ class EchoLifecycle {
     this.events = []
     this.pushEvent({ message: `constructor called with ${width} ${height}` })
 
-    const actualWidth = $(this.rootElement).width()
-    const actualHeight = $(this.rootElement).height()
-    this.pushEvent({ message: `actual container size at constructor time: ${actualWidth}x${actualHeight}` })
+    this.echoDimensions('constructor')
+    this.watchForChangeInDimensions()
+  }
+
+  sampleDimensions () {
+    try {
+      const jqueryRoot = $(this.rootElement)
+      const bbox = this.rootElement.getBoundingClientRect()
+      return {
+        jquery: {
+          width: jqueryRoot.width(),
+          height: jqueryRoot.height()
+        },
+        bbox: {
+          width: bbox.width,
+          height: bbox.height
+        }
+      }
+    } catch (err) {
+      console.error(`fail in echoDimensions:`)
+      console.error(err)
+
+      return null
+    }
+  }
+
+  watchForChangeInDimensions () {
+    this.lastDimensions = this.sampleDimensions()
+    this.watchInterval = setInterval(() => {
+      const newDimensions = this.sampleDimensions()
+      if (!deepEqual(this.lastDimensions, newDimensions)) {
+        this.echoDimensions(`size change at ${this.timestamp()}ms`, newDimensions)
+      }
+      this.lastDimensions = newDimensions
+    }, 50)
+  }
+
+  timestamp () {
+    return Date.now() - this.start
+  }
+
+  echoDimensions (identifier, dimensions = this.sampleDimensions()) {
+    this.pushEvent({ message: `${identifier}: jquery: ${dimensions.jquery.width}x${dimensions.jquery.height}, bbox: ${dimensions.bbox.width}x${dimensions.bbox.height}` })
+    if (this.renderValueCalled) {
+      this._draw()
+    }
   }
 
   pushEvent (event) {
+    console.log(`Event(${this.events.length}): ${JSON.stringify(event)}`)
     this.events.push(_.assign(event, { count: this.events.length }))
   }
 
   resize (width, height) {
-    this.pushEvent({ message: `resize called with ${width} ${height}` })
+    this.pushEvent({ message: `resize called at ${this.timestamp()}ms with ${width} ${height}` })
     this.width = width
     this.height = height
-
-    const actualWidth = $(this.rootElement).width()
-    const actualHeight = $(this.rootElement).height()
-    this.pushEvent({ message: `actual container size at resize time: ${actualWidth}x${actualHeight}` })
-
+    this.echoDimensions('time of resize call')
     return this._draw()
   }
 
   renderValue (inputConfig, userState) {
+    this.renderValueCalled = true
     this.pushEvent({ message: `renderValue called with inputConfig: ${JSON.stringify(inputConfig, {}, 2)}, userState:  ${JSON.stringify(userState, {}, 2)}` })
 
     this._clearRootElement()
@@ -73,10 +117,11 @@ class EchoLifecycle {
   }
 
   _draw () {
-    const fontSize = 24
-    const messageContainerHeight = 3.2 * fontSize
-    const messageContainerGutter = 10
-    const horizontalPadding = 5
+    const fontSize = 16
+    const messageContainerHeight = 2.1 * fontSize
+    const messageContainerGutter = 8
+    const outerPadding = 6
+    const textPadding = 5
 
     const maxDisplayableEventsCount = Math.floor(this.height / (messageContainerHeight + messageContainerGutter))
     const displayableEventCount = Math.min(this.events.length, maxDisplayableEventsCount)
@@ -96,7 +141,8 @@ class EchoLifecycle {
         .attr('transform', (d, i) => `translate(0,${i * (messageContainerHeight + messageContainerGutter)})`)
 
     enteringCells.append('rect')
-      .attr('width', this.width)
+      .attr('x', outerPadding)
+      .attr('width', this.width - 2 * outerPadding)
       .attr('height', messageContainerHeight)
       .attr('class', 'message-container')
       .style('fill', '#99ff33')
@@ -104,21 +150,20 @@ class EchoLifecycle {
       .style('stroke-width', 3)
 
     enteringCells.append('text')
-      .attr('y', 0)
       .attr('dy', 0)
-      .attr('x', horizontalPadding)
+      .attr('dx', outerPadding + textPadding)
       .attr('class', () => 'message-text')
       .style('dominant-baseline', 'text-before-edge')
       .style('font-size', `${fontSize}px`)
       .style('font-weight', '900')
       .text((d) => `${d.count}: ${d.message}`)
-      .call(wrap, this.width - horizontalPadding)
+      .call(wrap, this.width - (2 * outerPadding + textPadding), outerPadding + textPadding)
   }
 }
 EchoLifecycle.initClass()
 
 // attribution : https://bl.ocks.org/mbostock/7555321
-function wrap (text, width) {
+function wrap (text, width, dx) {
   text.each(function () {
     let text = d3.select(this)
     let words = text.text().split(/\s+/).reverse()
@@ -137,7 +182,7 @@ function wrap (text, width) {
         line.pop()
         tspan.text(line.join(' '))
         line = [word]
-        tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
+        tspan = text.append('tspan').attr('x', 0).attr('dx', dx).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
       }
     }
   })
