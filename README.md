@@ -37,13 +37,13 @@ In R:
 Developing / Contributing
 -
 
-## Quick Command Reference
+### Quick Command Reference
 
 * To install for local development: `yarn install`
 * To run local server: `gulp serve`
 * To build the `inst` directory: `gulp`
 
-## Details
+### Details
 
 rhtmlEchoLifecycle relies heavily on [rhtmlBuildUtils](https://github.com/Displayr/rhtmlBuildUtils). You should read through the docs in the rhtmlBuildUtils repo to understand:
  
