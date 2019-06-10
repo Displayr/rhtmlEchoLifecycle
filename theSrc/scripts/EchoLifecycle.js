@@ -137,8 +137,8 @@ class EchoLifecycle {
 
     const enteringCells = allCells.enter()
       .append('g')
-        .attr('class', 'event')
-        .attr('transform', (d, i) => `translate(0,${i * (messageContainerHeight + messageContainerGutter)})`)
+      .attr('class', 'event')
+      .attr('transform', (d, i) => `translate(0,${i * (messageContainerHeight + messageContainerGutter)})`)
 
     enteringCells.append('rect')
       .attr('x', outerPadding)
