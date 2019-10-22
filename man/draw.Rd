@@ -7,7 +7,8 @@
 https://github.com/Displayr/rhtmlEchoLifecycle
 }
 \usage{
-draw(width = 600, height = 600, settings = "")
+draw(width = 600, height = 600, autoSaveStateInterval = NULL,
+  name = NULL)
 }
 \description{
 A HTMLWidget that echos function calls for debugging purposes.

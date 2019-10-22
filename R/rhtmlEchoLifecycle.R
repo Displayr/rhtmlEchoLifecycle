@@ -15,11 +15,16 @@
 #' @export
 #'
 
-draw <- function(width = 600, height = 600, settings = '') {
+draw <- function(width = 600, height = 600, autoSaveStateInterval = NULL, name = NULL) {
+
+  x = list(
+    autoSaveStateInterval = autoSaveStateInterval,
+    name = name
+  )
 
   htmlwidgets::createWidget(
     name = 'rhtmlEchoLifecycle',
-    settings,
+    x,
     width = width,
     height = height,
     sizingPolicy = htmlwidgets::sizingPolicy(

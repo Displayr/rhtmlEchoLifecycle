@@ -1,4 +1,4 @@
-An R htmlwidget that echoes all function calls. useful for debugging applications that use html widgets.
+An R htmlwidget that echoes all function calls and optionally saves state on an interval. Useful for debugging applications that use html widgets.
 
 How To Interpret Results
 -
@@ -26,13 +26,17 @@ MIT + file LICENSE © [Displayr](https://www.displayr.com)
 Local Test
 -
 
-In R:
+In R no params:
+    
+    library(devtools)
+    install()
+    rhtmlEchoLifecycle::draw()
+
+In R all params:
 
     library(devtools)
     install()
-    width = 400
-    height = 400
-    rhtmlEchoLifecycle::draw(width, height, 'abcd')
+    rhtmlEchoLifecycle::draw(width=400, height=400, autoSaveStateInterval=1000, name="instance1")
 
 Developing / Contributing
 -

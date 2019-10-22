@@ -19,10 +19,19 @@ class EchoLifecycle {
 
     this.width = width
     this.height = height
-    this.state = {}
-    this.stateChangedCallback = stateChangedCallback
     this.events = []
     this.pushEvent({ message: `constructor called with ${width} ${height}` })
+
+    this.config = {
+      autoSaveStateInterval: null,
+      name: 'name me'
+    }
+
+    this.stateChangedCallback = stateChangedCallback
+    this.state = {
+      increment: 0,
+      name: null // I will pull from config for this value unless provided in the userState
+    }
 
     this.echoDimensions('constructor')
     this.watchForChangeInDimensions()
@@ -89,10 +98,36 @@ class EchoLifecycle {
     this.renderValueCalled = true
     this.pushEvent({ message: `renderValue called with inputConfig: ${JSON.stringify(inputConfig, {}, 2)}, userState:  ${JSON.stringify(userState, {}, 2)}` })
 
+    _.assign(this.config, inputConfig)
+    _.assign(this.state, userState)
+
+    // this _should_ detect when wrong widget state is passed to instance
+    if (_.isNull(this.state.name)) {
+      this.state.name = this.config.name
+    }
+
+    console.log(`config on widget init`, inputConfig)
+    console.log(`state on widget init`, userState)
+
     this._clearRootElement()
     this._manipulateRootElementSize()
     this._addRootSvgToRootElement()
-    return this._draw()
+    this._draw()
+
+    if (!_.isNull(this.config.autoSaveStateInterval)) {
+      setInterval(() => {
+        this.state.increment++
+        console.log(`${this.config.name} called state callback with `, this.state)
+        if (this.config.name !== this.state.name) {
+          console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
+          console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
+          console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
+        }
+        if (_.isFunction(this.stateChangedCallback)) {
+          this.stateChangedCallback(this.state)
+        }
+      }, parseInt(this.config.autoSaveStateInterval))
+    }
   }
 
   _clearRootElement () {
