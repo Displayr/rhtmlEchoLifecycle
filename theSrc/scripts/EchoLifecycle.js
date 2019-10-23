@@ -105,6 +105,11 @@ class EchoLifecycle {
     if (_.isNull(this.state.name)) {
       this.state.name = this.config.name
     }
+    if (this.config.name !== this.state.name) {
+      console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
+      console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
+      console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
+    }
 
     console.log(`config on widget init`, inputConfig)
     console.log(`state on widget init`, userState)
@@ -118,13 +123,9 @@ class EchoLifecycle {
       setInterval(() => {
         this.state.increment++
         console.log(`${this.config.name} called state callback with `, this.state)
-        if (this.config.name !== this.state.name) {
-          console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
-          console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
-          console.log(`!!! Invalid State. Different instance detected : config: ${this.config.name}, state: ${this.state.name}`)
-        }
         if (_.isFunction(this.stateChangedCallback)) {
           this.stateChangedCallback(this.state)
+          this._draw()
         }
       }, parseInt(this.config.autoSaveStateInterval))
     }
@@ -163,6 +164,7 @@ class EchoLifecycle {
     const displayableEvents = _.slice(this.events, this.events.length - displayableEventCount, this.events.length)
 
     this.outerSvg.selectAll('.event').remove()
+    this.outerSvg.selectAll('.state-circle').remove()
 
     // NB JQuery insists on lowercasing attributes, so we must use JS directly when setting viewBox ?!
     document.getElementById(this.id).setAttribute('viewBox', `0 0 ${this.width} ${this.height}`)
@@ -193,6 +195,26 @@ class EchoLifecycle {
       .style('font-weight', '900')
       .text((d) => `${d.count}: ${d.message}`)
       .call(wrap, this.width - (2 * outerPadding + textPadding), outerPadding + textPadding)
+
+    const stateContainer = this.outerSvg
+      .append('g')
+      .attr('class', 'state-container')
+      .attr('transform', `translate(${this.width - 40},${outerPadding})`)
+
+    stateContainer
+      .append('circle')
+      .attr('cx', 10)
+      .attr('cy', 14)
+      .attr('r', 20)
+      .style('fill', 'red')
+      .style('stroke', 'lightblue')
+      .style('opacity', 1)
+
+    stateContainer
+      .append('text')
+      .attr('y', 14)
+      .attr('x', 7)
+      .text(this.state.increment)
   }
 }
 EchoLifecycle.initClass()
