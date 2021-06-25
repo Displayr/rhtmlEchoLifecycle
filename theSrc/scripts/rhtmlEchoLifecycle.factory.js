@@ -9,6 +9,6 @@ module.exports = function (element, width, height, stateChangedCallback) {
 
     renderValue (inputConfig, userState) {
       instance.renderValue(inputConfig, userState)
-    }
+    },
   }
 }

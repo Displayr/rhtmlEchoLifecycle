@@ -4,13 +4,12 @@
     "node": ">=6.9.5"
   },
   "scripts": {
-    "prepush": "node ./bin/prepush",
-    "test": "gulp testSpecs && gulp testVisual"
+    "prepush": "node ./bin/prepush"
   },
   "devDependencies": {
     "gulp": "^4.0.2",
     "husky": "^0.13.3",
-    "rhtmlBuildUtils": "github:Displayr/rhtmlBuildUtils#4.0.0"
+    "rhtmlBuildUtils": "github:Displayr/RhtmlBuildUtils#7.0.3"
   },
   "dependencies": {
     "babel-polyfill": "6.26.0",
@@ -18,6 +17,6 @@
     "deep-equal": "^1.0.1",
     "es6-promise": "^3.2.1",
     "jquery": "^3.5.1",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.21"
   }
 }

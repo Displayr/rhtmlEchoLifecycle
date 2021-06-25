@@ -6,5 +6,5 @@ import widgetFactory from './rhtmlEchoLifecycle.factory'
 HTMLWidgets.widget({
   name: 'rhtmlEchoLifecycle',
   type: 'output',
-  factory: widgetFactory
+  factory: widgetFactory,
 })

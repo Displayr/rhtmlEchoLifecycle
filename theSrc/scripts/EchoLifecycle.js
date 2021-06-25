@@ -35,12 +35,12 @@ class EchoLifecycle {
       return {
         jquery: {
           width: jqueryRoot.width(),
-          height: jqueryRoot.height()
+          height: jqueryRoot.height(),
         },
         bbox: {
           width: bbox.width,
-          height: bbox.height
-        }
+          height: bbox.height,
+        },
       }
     } catch (err) {
       console.error(`fail in echoDimensions:`)
