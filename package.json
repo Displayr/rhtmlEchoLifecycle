@@ -1,4 +1,5 @@
 {
+  "name": "rhtmlEchoLifecycle",
   "private": true,
   "engines": {
     "node": ">=12.9.0"
