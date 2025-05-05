@@ -1,0 +1,18 @@
+name: Build rhtmlEchoLifecycle
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    name: Build rhtmlEchoLifecycle
+    permissions:
+      checks: write
+      contents: read
+    uses: Displayr/nixr-public/.github/workflows/build-flake-installable.yaml@master
+    with:
+      installable-path: pkgs.x86_64-linux.rPackages.rhtmlEchoLifecycle
+      build-args: --override-input rhtmlEchoLifecycle .
+      installable-name: rhtmlEchoLifecycle
+    secrets: inherit
